@@ -1,4 +1,7 @@
 # 🩺 Clinical‑JSON‑Extractor
+![image](https://github.com/user-attachments/assets/0c4fcd56-e689-4c08-a1b3-45b7a7f7d997)
+
+![image](https://github.com/user-attachments/assets/1f575f88-4999-47d4-94d0-2a59bfdd8479)
 
 Extract **structured clinical data** from scanned (or born‑digital) PDFs.
 
@@ -126,23 +129,4 @@ pillow>=10.0.0          # PyMuPDF dependency
 ```
 
 Happy extracting! 🚀
-
-
-## ⚙️ Architecture
-
-```mermaid
-flowchart TD
-  A[PDF Input] --> B[Partitioning]
-  B --> B1[Text Chunks]
-  B --> B2[Table Extraction]
-  B --> B3[Embedded Images]
-  B --> B4[Page Renders]
-  B1 --> C1[Summarize via GROQ Cloud]
-  B2 --> C1
-  B3 --> C2[Summarize via GPT-4o]
-  C1 --> D[Embed & Store in Chroma]
-  C2 --> D
-  D --> E[RAG Chain]
-  E --> F[Final Answer]
-```
 
