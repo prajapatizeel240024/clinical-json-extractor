@@ -81,6 +81,7 @@ flowchart TD
   classDef faint fill=#0000,stroke-width:0,color:#999;
   class B,C,D,E faint;
 ```
+---
 
 ## 💰 Cost cheat‑sheets (actual 11‑call run)
 
