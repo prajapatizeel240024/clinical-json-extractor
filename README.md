@@ -52,7 +52,7 @@ python extractor.py            # PDFs & schema go in ./data
 ![image](https://github.com/user-attachments/assets/e4196496-7416-46a9-b759-64297993d1f1)
 
 
-## 💰 Cost cheat‑sheet (actual run)
+## 💰 Cost cheat‑sheet (actual run on **OPENAI | gpt-4o**)
 
 | Step            | Calls | Input tokens | Output tokens | Est. cost* |
 |-----------------|------:|-------------:|--------------:|-----------:|
@@ -61,6 +61,23 @@ python extractor.py            # PDFs & schema go in ./data
 | **Total**       | **11**| **9 365**    | **1 168**     | **\$ 0.0374** |
 
 \* Based on the \$ 2.50 / \$ 12.50 per‑million‑token promotional pricing shown on your invoice.
+
+### 💰 Cost cheat‑sheet (actual run on **GROQ | meta‑llama / llama‑4‑scout‑17b‑16e‑instruct**)
+
+The same 11 calls ( 9 365 input + 1 168 output tokens ) were replayed on Groq’s
+Llama 4 Scout 17‑B model, yielding the invoice line **$ 0.001609 USD**.
+
+| Step            | Calls | Input tokens | Output tokens | Est. cost* |
+|-----------------|------:|-------------:|--------------:|-----------:|
+| Extraction      | 10    | ~8 500       | ~1 100        | \$ 0.001372 |
+| Transformation  | 1     | ~ 865        | ~ 68          | \$ 0.000237 |
+| **Total**       | **11**| **9 365**    | **1 168**     | **\$ 0.001609** |
+
+\* Effective blended rate ≈ \$ 0.153 per million tokens (Groq’s April 2025
+pricing for Llama 4 Scout: one flat price for in‑ and out‑tokens).
+
+That’s roughly **23 × cheaper** than the discounted GPT‑4o run
+(\$ 0.03736 → \$ 0.001609).
 
 ## 🔧 Troubleshooting
 
