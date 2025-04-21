@@ -52,17 +52,15 @@ python extractor.py            # PDFs & schema go in ./data
 ![image](https://github.com/user-attachments/assets/e4196496-7416-46a9-b759-64297993d1f1)
 
 
-## 💰 Cost cheat‑sheet (GPT‑4o Apr 2025)
+## 💰 Cost cheat‑sheet (actual run)
 
-| Step            | Calls       | Est. tokens / call* | Price / 1M tokens | Cost |
-|-----------------|-------------|---------------------|-------------------|------|
-| Extraction      | 3 pages × 1 | ~450 in + 150 out   | \$5 in / \$15 out | **\$0.008** |
-| Transformation  | 1           | ~1 000 in + 300 out | ″                | **\$0.002** |
-| **Total**       | —           | —                   | —                 | **≈ \$0.01** |
+| Step            | Calls | Input tokens | Output tokens | Est. cost* |
+|-----------------|------:|-------------:|--------------:|-----------:|
+| Extraction      | 10    | ~8 500       | ~1 100        | \$ 0.0328 |
+| Transformation  | 1     | ~ 865        | ~ 68          | \$ 0.0046 |
+| **Total**       | **11**| **9 365**    | **1 168**     | **\$ 0.0374** |
 
-*Assumes 300 × 400 px page images and compact JSON output. Tune DPI/prompt length to adjust.*
-
----
+\* Based on the \$ 2.50 / \$ 12.50 per‑million‑token promotional pricing shown on your invoice.
 
 ## 🔧 Troubleshooting
 
