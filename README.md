@@ -31,9 +31,6 @@ clinical-json-extractor/
 
 ---
 
-## ⚙️ Setup
-
-```bash
 # clone / enter repo root
 python -m venv .venv
 source .venv/bin/activate                # Windows: .venv\Scripts\activate
@@ -67,9 +64,6 @@ The script will:
 
 ## 🌐 Architecture overview
 
-![image](https://github.com/user-attachments/assets/4098ec00-6446-4303-b1fe-c39fedfad907)
-![image](https://github.com/user-attachments/assets/1ee583ad-f0de-498c-a020-4ede6b764fd0)
-
 ```mermaid
 flowchart TD
   A[PDF] -->|PyMuPDF @ 200 DPI| B[base‑64 PNGs]
@@ -78,9 +72,10 @@ flowchart TD
   D -->|LLM ② transform| E[schema‑compliant JSON]
   E -->|write file| F[(data/final_*.json)]
 
-  classDef faint fill=#0000,stroke-width:0,color:#999;
-  class B,C,D,E faint;
+
+
 ```
+
 ---
 
 ## 💰 Cost cheat‑sheets (actual 11‑call run)
@@ -131,3 +126,23 @@ pillow>=10.0.0          # PyMuPDF dependency
 ```
 
 Happy extracting! 🚀
+
+
+## ⚙️ Architecture
+
+```mermaid
+flowchart TD
+  A[PDF Input] --> B[Partitioning]
+  B --> B1[Text Chunks]
+  B --> B2[Table Extraction]
+  B --> B3[Embedded Images]
+  B --> B4[Page Renders]
+  B1 --> C1[Summarize via GROQ Cloud]
+  B2 --> C1
+  B3 --> C2[Summarize via GPT-4o]
+  C1 --> D[Embed & Store in Chroma]
+  C2 --> D
+  D --> E[RAG Chain]
+  E --> F[Final Answer]
+```
+
