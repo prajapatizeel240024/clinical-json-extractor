@@ -68,7 +68,7 @@ The script will:
 ## 🌐 Architecture overview
 
 ![image](https://github.com/user-attachments/assets/4098ec00-6446-4303-b1fe-c39fedfad907)
-
+![image](https://github.com/user-attachments/assets/1ee583ad-f0de-498c-a020-4ede6b764fd0)
 
 
 ## 💰 Cost cheat‑sheets (actual 11‑call run)
