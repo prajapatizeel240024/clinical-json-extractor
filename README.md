@@ -88,14 +88,4 @@ That’s roughly **23 × cheaper** than the discounted GPT‑4o run
 | Empty / mis‑shaped fields | Ensure `medical_schema.json` matches the keys expected in the transform step |
 
 ---
-
-## 📝 requirements.txt
-
-```text
-PyMuPDF==1.24.5
-openai==1.25.1
-python-dotenv==1.0.1
-pillow>=10.0.0
-```
-
 Happy extracting! 🚀
