@@ -49,19 +49,8 @@ python extractor.py            # PDFs & schema go in ./data
 
 ## 🌐 Architecture overview
 
-```mermaid
-flowchart TD
-  A[PDF] -->|rasterise 200dpi| B[base‑64 PNGs]
-  B -->|extract gpt‑4o| C[page‑level JSON]
-  C -->|append| D[raw JSON list]
-  D -->|transform gpt‑4o| E[schema‑compliant JSON]
-  E -->|write file| F[(data/final_*.json)]
+![image](https://github.com/user-attachments/assets/e4196496-7416-46a9-b759-64297993d1f1)
 
-  classDef faint fill=#0000,stroke-width:0,color:#999;
-  class B,C,D,E faint;
-```
-
----
 
 ## 💰 Cost cheat‑sheet (GPT‑4o Apr 2025)
 
