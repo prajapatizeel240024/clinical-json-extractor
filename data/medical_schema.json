@@ -1,0 +1,63 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "MedicalReportPages",
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "medical_diagnosis": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "surgical_history": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "allergies": {
+          "type": "object",
+          "properties": {
+            "has_allergies": { "type": "boolean" },
+            "allergy_list": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          },
+          "required": ["has_allergies", "allergy_list"],
+          "additionalProperties": false
+        },
+        "physical_examination": {
+          "type": "object",
+          "properties": {
+            "height": { "type": "string" },
+            "weight": { "type": "string" },
+            "blood_pressure": { "type": "string" },
+            "pulse": { "type": "string" },
+            "respiratory_rate": { "type": "string" },
+            "temperature": { "type": "string" },
+            "overall_health": {
+              "type": "string",
+              "enum": ["good", "fair", "poor"]
+            }
+          },
+          "required": [
+            "height",
+            "weight",
+            "blood_pressure",
+            "pulse",
+            "respiratory_rate",
+            "temperature",
+            "overall_health"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "medical_diagnosis",
+        "surgical_history",
+        "allergies",
+        "physical_examination"
+      ],
+      "additionalProperties": false
+    }
+  }
+  
