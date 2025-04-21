@@ -63,22 +63,32 @@ folders, filenames, or model versions.
 
 ## 🌐 Architecture overview
 
-```mermaid
 flowchart TD
-  subgraph 1[Pre‑processing]
-    A[PDF] -->|PyMuPDF<br>rasterise @ 200 DPI| B[Base‑64 PNGs]
+  %% ── 1. Pre‑processing ─────────────────────────────────────
+  subgraph "Pre‑processing"
+    A[PDF] -->|PyMuPDF – rasterise @ 200 DPI| B[Base‑64 PNGs]
   end
-  subgraph 2[LLM Extraction]
-    B -->|GPT‑4o Vision<br>(system prompt #1)| C[Page‑level JSON[]]
-    C -. list append .-> D[Raw JSON list]
+
+  %% ── 2. LLM Extraction ─────────────────────────────────────
+  subgraph "LLM Extraction"
+    B -->|GPT‑4o Vision (prompt #1)| C[Page‑level JSON]
+    C -->|append| D[Raw JSON list]
   end
-  subgraph 3[LLM Transformation]
-    D -->|GPT‑4o<br>(system prompt #2)| E[Schema‑compliant JSON]
+
+  %% ── 3. LLM Transformation ─────────────────────────────────
+  subgraph "LLM Transformation"
+    D -->|GPT‑4o (prompt #2)| E[Schema‑compliant JSON]
   end
-  subgraph 4[Persistence]
+
+  %% ── 4. Persistence ───────────────────────────────────────
+  subgraph Persistence
     E -->|write file| F[(data/final_*.json)]
   end
-```
+
+  %% annotation
+  classDef faint fill=#0000,stroke-width:0,color=#999;
+  class B,C,D,E faint;
+
 
 *Nodes **2** and **3** are the only parts hitting the OpenAI API.*
 
