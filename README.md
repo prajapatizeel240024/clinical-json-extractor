@@ -67,19 +67,9 @@ The script will:
 
 ## 🌐 Architecture overview
 
-```mermaid
-flowchart TD
-  A[PDF] -->|PyMuPDF @ 200 DPI| B[base‑64 PNGs]
-  B -->|LLM ① extract| C[page JSON]
-  C -->|append| D[raw JSON list]
-  D -->|LLM ② transform| E[schema‑compliant JSON]
-  E -->|write file| F[(data/final_*.json)]
+![image](https://github.com/user-attachments/assets/4098ec00-6446-4303-b1fe-c39fedfad907)
 
-  classDef faint fill=#0000,stroke-width:0,color:#999;
-  class B,C,D,E faint;
-```
 
----
 
 ## 💰 Cost cheat‑sheets (actual 11‑call run)
 
