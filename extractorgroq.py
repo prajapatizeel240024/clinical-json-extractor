@@ -7,20 +7,22 @@ from groq import Groq
 # ─── Configuration ─────────────────────────────────────────────────────────────
 # Make sure you’ve set: export GROQ_API_KEY="your_groq_key"
 api_key = os.getenv("GROQ_API_KEY")
-client  = Groq(api_key=api_key)
+if not api_key:
+    raise RuntimeError("Please set the GROQ_API_KEY environment variable")
+client = Groq(api_key=api_key)
 
 # Paths for extraction
-READ_PATH        = "./data"             # contains attention.pdf
-EXTRACT_PATH     = "./data"             # will write *_extracted.json here
+READ_PATH      = "./data"             # contains attention.pdf
+EXTRACT_PATH   = "./data"             # will write *_extracted.json here
 
 # Paths for transformation
-SCHEMA_PATH      = "./data/medical_schema.json"
-TRANSFORM_PATH   = "./data/final_medical.json"
+SCHEMA_PATH    = "./data/medical_schema.json"
+TRANSFORM_PATH = "./data/final_medical.json"
 
 # ─── Helpers ───────────────────────────────────────────────────────────────────
 
 def pdf_to_base64_images(pdf_path: str, dpi: int = 200) -> list[str]:
-    """Convert each page of the PDF into a base64‑encoded PNG."""
+    """Convert each page of the PDF into a base64-encoded PNG."""
     doc = fitz.open(pdf_path)
     pages = []
     for page in doc:
@@ -32,17 +34,17 @@ def pdf_to_base64_images(pdf_path: str, dpi: int = 200) -> list[str]:
 
 def extract_medical_data(base64_image: str) -> dict:
     """
-    Send one page-image to Groq (Llama‑4‑Maverick) and return a dict:
+    Send one page-image to Groq (Llama-4-Maverick) and return a dict:
       {
         "medical_diagnosis": [...],
         "surgical_history": [...],
-        "allergies": { has_allergies: bool, allergy_list: [...] },
-        "physical_examination": { height, weight, blood_pressure, pulse, respiratory_rate, temperature, overall_health }
+        "allergies": { "has_allergies": bool, "allergy_list": [...] },
+        "physical_examination": { ... }
       }
     """
     system_prompt = """
 You are an OCR-like data extraction tool for clinical notes.
-Given one page‑image, extract exactly:
+Given one page-image, extract exactly:
 
 1. medical_diagnosis: list of primary diagnoses.
 2. surgical_history: list of past surgeries.
@@ -93,6 +95,8 @@ def extract_from_multiple_pages(base64_images, original_filename, output_directo
         json.dump(report, f, ensure_ascii=False, indent=2)
     return out_path
 
+# ─── Extraction Driver ─────────────────────────────────────────────────────────
+
 def main_extract(read_path, write_path):
     """Walk read_path for PDFs, extract each, and save JSONs in write_path."""
     for fn in os.listdir(read_path):
@@ -106,17 +110,17 @@ def main_extract(read_path, write_path):
 
 # ─── Transformation ────────────────────────────────────────────────────────────
 
-def transform_medical_data(json_raw, json_schema) -> dict:
+def transform_medical_data(record: dict, json_schema: dict) -> dict:
     """
-    Send raw JSON & schema to Groq, get back schema‑conformant JSON.
+    Send one record and the schema to Groq, get back a schema-conformant JSON object.
     """
     system_prompt = f"""
-You are a data transformation tool. Given raw JSON data and a JSON schema,
-output data that exactly matches the schema:
-- Omit non‑schema fields.
-- Fill missing with null.
-- Translate to English.
-- Format dates as YYYY-MM-DD.
+You are a data transformation tool. Given one record and a JSON schema,
+output exactly one JSON object that:
+- Omits any fields not in the schema.
+- Fills missing fields with null.
+- Translates any non-English text into English.
+- Formats dates as YYYY-MM-DD.
 
 Here is the schema:
 {json.dumps(json_schema, indent=2)}
@@ -129,7 +133,7 @@ Here is the schema:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": [
                 {"type": "text", "text":
-                    f"Transform this JSON to match the schema: {json.dumps(json_raw)}"
+                    f"Transform this record to match the schema: {json.dumps(record)}"
                 }
             ]}
         ]
@@ -139,7 +143,12 @@ Here is the schema:
 def main_transform(extracted_json_path: str,
                    json_schema_path: str,
                    save_path: str):
-    """Apply transform_medical_data() to each *_extracted.json, saving to save_path."""
+    """
+    For each *_extracted.json in extracted_json_path:
+      • Load the list of raw records
+      • Transform each record individually
+      • Save the list of transformed records to save_path/transformed_<fname>
+    """
     with open(json_schema_path, "r", encoding="utf-8") as sf:
         schema = json.load(sf)
 
@@ -147,17 +156,23 @@ def main_transform(extracted_json_path: str,
     for fname in os.listdir(extracted_json_path):
         if not fname.endswith("_extracted.json"):
             continue
+
         full_in = os.path.join(extracted_json_path, fname)
         with open(full_in, "r", encoding="utf-8") as rf:
-            raw = json.load(rf)
+            raw_list = json.load(rf)
 
         print(f"🔄 Transforming {fname}…")
-        transformed = transform_medical_data(raw, schema)
+        transformed_list = []
+        for idx, record in enumerate(raw_list, start=1):
+            print(f"   • Record {idx}/{len(raw_list)}…", end="\r")
+            transformed = transform_medical_data(record, schema)
+            transformed_list.append(transformed)
+        print()  # newline after progress
 
         out_name = f"transformed_{fname}"
         full_out = os.path.join(save_path, out_name)
         with open(full_out, "w", encoding="utf-8") as wf:
-            json.dump(transformed, wf, ensure_ascii=False, indent=2)
+            json.dump(transformed_list, wf, ensure_ascii=False, indent=2)
         print(f"✅ Saved: {full_out}")
 
 # ─── Script Entry ──────────────────────────────────────────────────────────────
@@ -165,5 +180,5 @@ def main_transform(extracted_json_path: str,
 if __name__ == "__main__":
     # 1) Extraction: PDF → raw JSON
     main_extract(READ_PATH, EXTRACT_PATH)
-    # 2) Transformation: raw JSON → schema‑conformant JSON
+    # 2) Transformation: raw JSON → schema-conformant JSON
     main_transform(EXTRACT_PATH, SCHEMA_PATH, TRANSFORM_PATH)
